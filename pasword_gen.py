@@ -119,12 +119,12 @@ def deleteProfile():
     
     
     
-    with open("passwords.txt", "r") as f: 
+    with open("passwords.txt", "r") as document: 
         
         #Make profile
 
         answer = {}
-        for line in f:
+        for line in document:
             line = line.split()
             if not line:  # empty line?
                 continue
@@ -135,7 +135,7 @@ def deleteProfile():
         cprofile = (nProfile, " ", allData[0], " ", allData[1], " ", allData[2])
 
         # read data line by line  
-        data = f.readlines() 
+        data = document.readlines() 
       
     # open file in write mode 
     with open("passwords.txt", "w") as f: 

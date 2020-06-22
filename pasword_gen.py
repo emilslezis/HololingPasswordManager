@@ -36,7 +36,19 @@ def main():
   
     elif action == "m":
 
-        print("Sorry this feature will be available soon.")
+        modify = (input("Enter in which way you want to modify(c - change data d - delete data profile)"))
+
+        if modify == "d":
+
+            deleteProfile()
+
+        elif modify == "c":
+
+            print("Sorry this feature is not available at the moment.")
+
+        else:
+
+            invalidCharacter()
 
         continueProg()
 
@@ -100,6 +112,39 @@ def readPassword():
     print("Email: " + allData[0])
     print("Nickname: " + allData[1])
     print("Password: " + allData[2])
+
+def deleteProfile():
+
+    nProfile = (input("Enter profile you want to delete"))
+    
+    
+    
+    with open("passwords.txt", "r") as f: 
+        
+        #Make profile
+
+        answer = {}
+        for line in f:
+            line = line.split()
+            if not line:  # empty line?
+                continue
+            answer[line[0]] = line[1:]
+
+        allData = (answer[nProfile])
+
+        cprofile = (nProfile, " ", allData[0], " ", allData[1], " ", allData[2])
+
+        # read data line by line  
+        data = f.readlines() 
+      
+    # open file in write mode 
+    with open("passwords.txt", "w") as f: 
+      
+        for line in data : 
+          
+            # condition for data to be deleted 
+            if line.strip("\n") != cprofile :  
+                f.write(line) 
 
 def invalidCharacter():
 

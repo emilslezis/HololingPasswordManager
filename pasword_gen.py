@@ -2,12 +2,12 @@
 #Made by Emil Sležis
 
 
-# module imports
+# Import needed modules
 
 import string
 import random
 
-#Lists with symbols
+# Generate lists with symbols 
 
 letters = list(string.ascii_letters)
 digits = list(string.digits)
@@ -15,23 +15,22 @@ symbols = list(string.punctuation)
 
 Characters = (letters, digits, symbols) 
 
-# Generate password
+# Whole program
 
 
-def main():
+def main(): # Main function
 
     action = input("Enter your action (s - see, c - create new - m - modify)")
 
     if action == "s":
 
-        readPassword()
-
+        needed = str(input("Enter profile, which you want to see: "))
+        readPassword(needed)
         continueProg()
         
     elif action == "c":       
 
-        generatePassword()
-
+        new_profile()
         continueProg()
   
     elif action == "m":
@@ -40,32 +39,37 @@ def main():
 
         if modify == "d":
 
-            deleteProfile()
+            delitable = (input("Enter profile you want to delete"))
+            deleteProfile(delitable)
 
         elif modify == "c":
 
-            print("Sorry this feature is not available at the moment.")
+            modifyProfile()
+            continueProg()
 
         else:
 
             invalidCharacter()
-
-        continueProg()
+            continueProg()
 
     else:
 
         invalidCharacter()
         
     
-def generatePassword():
-
-    #Get data
+def new_profile(): #Function which gets needed data from user
 
     key = (input("Enter key of your password: "))
     email = (input("Enter your email: "))
     nick = (input("Enter your nickname: "))
     
-    #Generate password
+    password = generatePassword()
+    
+    data = [key, email, nick, password]
+
+    writeData(data)
+
+def generatePassword(): # Function which generates password
     
     passwordList = []
 
@@ -73,31 +77,30 @@ def generatePassword():
 
         charType = random.choice(Characters)
         newChar = random.choice(charType)
-        passwordList.append(newChar)
-        
+        passwordList.append(newChar)    
 
     password = ''.join([str(elem) for elem in passwordList])
+    
     print(password)
-
-    #Write data
+    return(password)
+    
+def writeData(data): #Write data on document
+    
 
     text_file = open("passwords.txt", "a") 
-
-    text_file.write(key)
+    text_file.write(data[0])
     text_file.write(" ")
-    text_file.write(email)
+    text_file.write(data[1])
     text_file.write(" ")
-    text_file.write(nick)
+    text_file.write(data[2])
     text_file.write(" ")
-    text_file.write(password)
+    text_file.write(data[3])
     text_file.write("\n")
 
     text_file.close()
 
 
-def readPassword():
-
-    needed = str(input("Enter what you want: "))
+def readPassword(needed): # Read data from document
     
     with open('passwords.txt', 'r') as document:
         answer = {}
@@ -113,11 +116,7 @@ def readPassword():
     print("Nickname: " + allData[1])
     print("Password: " + allData[2])
 
-def deleteProfile():
-
-    nProfile = (input("Enter profile you want to delete"))
-    
-    
+def deleteProfile(nProfile): # Delete profile from document
     
     with open("passwords.txt", "r") as document: 
         
@@ -146,7 +145,52 @@ def deleteProfile():
             if line.strip("\n") != cprofile :  
                 f.write(line) 
 
-def invalidCharacter():
+def modifyProfile(): # Modify profile
+
+    profile = (input("Enter profile you want to modify"))
+    changes = (input("Enter what you want to change(l - login, e - email, p - password)"))
+    
+    with open('passwords.txt', 'r') as document:
+        answer = {}
+        for line in document:
+            line = line.split()
+            if not line:  # empty line?
+                continue
+            answer[line[0]] = line[1:]
+
+    allData = (answer[profile])
+    
+    email = (allData[0])
+    nickname = (allData[1])
+    password = (allData[2])
+
+    if changes == "l": # change login data
+
+        nickname = (input("Enter your new nickname: "))
+        deleteProfile(profile)
+        data = [profile, email, nickname, password] 
+        writeData(data)
+   
+    elif changes == "e": # change email data
+
+        email = (input("Enter your new email: "))
+        deleteProfile(profile)
+        data = [profile, email, nickname, password] 
+        writeData(data)
+
+    elif changes == "p": # change password
+
+        password = generatePassword()
+        deleteProfile(profile)
+        data = [profile, email, nickname, password] 
+        writeData(data)
+
+    else:
+
+        invalidCharacter()
+    
+
+def invalidCharacter(): 
 
     print("wrong character")
         
@@ -155,7 +199,7 @@ def invalidCharacter():
     if tryAgain == "y":
         main()
 
-def continueProg():
+def continueProg(): # continue program after action
 
     answer = (input("Do you want to do something else?(y - yes, n - no)"))
 
@@ -163,4 +207,6 @@ def continueProg():
 
         main()
     
-main()
+if __name__ == "__main__":
+    
+    main()
